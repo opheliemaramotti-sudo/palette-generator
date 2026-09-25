@@ -10,6 +10,7 @@
   <script defer src="js/colors.js"></script>
   <script defer src="js/moods.js"></script>
   <script defer src="js/palette.js"></script>
+  <script defer src="js/gradient.js"></script>
   <script defer src="js/app.js"></script>
 </head>
 <body>
@@ -80,6 +81,23 @@
           aria-label="Décalage de teinte"
         >
         <button class="bouton" id="bouton-reset-hue" type="button">Remettre à 0</button>
+      </div>
+    </section>
+
+    <!-- ========== DÉGRADÉ AVEC GRAIN ========== -->
+    <section class="bloc" aria-labelledby="titre-degrade">
+      <div class="bloc__entete">
+        <h2 class="bloc__titre" id="titre-degrade">Dégradé</h2>
+      </div>
+      <div class="degrade">
+        <!-- Format portrait 9:16. Le dessin est fait en JavaScript (gradient.js). -->
+        <canvas class="degrade__canvas" id="canvas-degrade" width="540" height="960"
+                role="img" aria-label="Dégradé des 9 couleurs de la palette, avec grain"></canvas>
+        <div class="degrade__reglage">
+          <label for="curseur-grain">Intensité du grain</label>
+          <input class="degrade__curseur" id="curseur-grain" type="range" min="0" max="100" step="1" value="45">
+          <output class="valeur" id="valeur-grain" for="curseur-grain">45</output>
+        </div>
       </div>
     </section>
 

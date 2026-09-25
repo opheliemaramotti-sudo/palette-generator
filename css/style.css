@@ -308,7 +308,39 @@ body {
   border: 3px solid var(--texte);
 }
 
-/* ---------- 10. Mobile ---------- */
+/* ---------- 10. Dégradé ---------- */
+.degrade {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.degrade__canvas {
+  display: block;
+  width: min(100%, 360px);
+  height: auto;              /* garde le format 9:16 du canvas */
+  aspect-ratio: 9 / 16;
+  border-radius: var(--rayon-moyen);
+  box-shadow: 0 10px 30px var(--ombre);
+}
+
+.degrade__reglage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 360px);
+  color: var(--texte-doux);
+  font-size: 0.9rem;
+}
+
+.degrade__curseur {
+  flex: 1;
+  accent-color: var(--texte);
+}
+
+
+/* ---------- 11. Mobile ---------- */
 @media (max-width: 520px) {
   .grille {
     gap: 8px;

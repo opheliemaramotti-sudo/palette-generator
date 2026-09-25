@@ -16,6 +16,9 @@ var boutonRegenerer = document.getElementById("bouton-regenerer");
 var curseurHue = document.getElementById("curseur-hue");
 var valeurHue = document.getElementById("valeur-hue");
 var boutonResetHue = document.getElementById("bouton-reset-hue");
+var canvasDegrade = document.getElementById("canvas-degrade");
+var curseurGrain = document.getElementById("curseur-grain");
+var valeurGrain = document.getElementById("valeur-grain");
 
 
 /* ---------- État de l'application ---------- */
@@ -24,7 +27,8 @@ var etat = {
   moodPrincipal: null,   // le mood qui domine la palette
   moodAccent: null,      // le second mood, qui influence l'accent (ou null)
   paletteDeBase: [],     // les 9 couleurs générées (avant tout décalage HUE)
-  decalageHue: 0         // position du curseur HUE, de -180 à +180 degrés
+  decalageHue: 0,        // position du curseur HUE, de -180 à +180 degrés
+  intensiteGrain: 45     // curseur "Intensité du grain", de 0 à 100
 };
 
 
@@ -56,9 +60,11 @@ function afficherPalette(couleurs) {
   });
 }
 
-// Redessine tout ce qui dépend des couleurs.
+// Redessine tout ce qui dépend des couleurs : la grille et le dégradé.
 function rafraichir() {
-  afficherPalette(paletteAffichee());
+  var couleurs = paletteAffichee();
+  afficherPalette(couleurs);
+  Degrade.dessiner(canvasDegrade, couleurs, etat.moodPrincipal, etat.intensiteGrain);
 }
 
 
@@ -252,6 +258,14 @@ curseurHue.addEventListener("input", function () {
 
 boutonResetHue.addEventListener("click", function () {
   changerDecalageHue(0);
+});
+
+
+/* ---------- Intensité du grain ---------- */
+curseurGrain.addEventListener("input", function () {
+  etat.intensiteGrain = Number(curseurGrain.value);
+  valeurGrain.textContent = etat.intensiteGrain;
+  rafraichir();
 });
 
 
