@@ -13,6 +13,9 @@ var titrePalette = document.getElementById("titre-palette");
 var grille = document.getElementById("grille");
 var boutonTheme = document.getElementById("bouton-theme");
 var boutonRegenerer = document.getElementById("bouton-regenerer");
+var curseurHue = document.getElementById("curseur-hue");
+var valeurHue = document.getElementById("valeur-hue");
+var boutonResetHue = document.getElementById("bouton-reset-hue");
 
 
 /* ---------- État de l'application ---------- */
@@ -20,11 +23,24 @@ var boutonRegenerer = document.getElementById("bouton-regenerer");
 var etat = {
   moodPrincipal: null,   // le mood qui domine la palette
   moodAccent: null,      // le second mood, qui influence l'accent (ou null)
-  paletteDeBase: []      // les 9 couleurs générées (avant tout décalage HUE)
+  paletteDeBase: [],     // les 9 couleurs générées (avant tout décalage HUE)
+  decalageHue: 0         // position du curseur HUE, de -180 à +180 degrés
 };
 
 
 /* ---------- Affichage de la palette ---------- */
+
+// La palette réellement affichée : la palette de base, tournée du décalage HUE.
+// On repart TOUJOURS de la base : les décalages ne se cumulent jamais.
+function paletteAffichee() {
+  return etat.paletteDeBase.map(function (couleur) {
+    return {
+      role: couleur.role,
+      libelle: couleur.libelle,
+      hsl: Couleurs.decalerTeinte(couleur.hsl, etat.decalageHue)
+    };
+  });
+}
 
 // Peint les 9 cases de la grille avec les couleurs données.
 function afficherPalette(couleurs) {
@@ -42,7 +58,7 @@ function afficherPalette(couleurs) {
 
 // Redessine tout ce qui dépend des couleurs.
 function rafraichir() {
-  afficherPalette(etat.paletteDeBase);
+  afficherPalette(paletteAffichee());
 }
 
 
@@ -207,10 +223,35 @@ grille.addEventListener("click", function (evenement) {
 
 
 /* ---------- Bouton Régénérer ---------- */
-// Même mood, nouvelle variation.
+// Même mood, nouvelle variation (le décalage HUE en cours est conservé).
 boutonRegenerer.addEventListener("click", function () {
   etat.paletteDeBase = Palette.generer(etat.moodPrincipal, etat.moodAccent);
   rafraichir();
+});
+
+
+/* ---------- Barre HUE ---------- */
+
+// Affiche la valeur du curseur : "+30°", "-45°" ou "0°".
+function afficherValeurHue() {
+  var degres = etat.decalageHue;
+  valeurHue.textContent = (degres > 0 ? "+" : "") + degres + "°";
+}
+
+function changerDecalageHue(degres) {
+  etat.decalageHue = degres;
+  curseurHue.value = degres;
+  afficherValeurHue();
+  rafraichir();
+}
+
+// "input" se déclenche en continu pendant qu'on fait glisser : mise à jour en direct.
+curseurHue.addEventListener("input", function () {
+  changerDecalageHue(Number(curseurHue.value));
+});
+
+boutonResetHue.addEventListener("click", function () {
+  changerDecalageHue(0);
 });
 
 
@@ -266,4 +307,5 @@ boutonTheme.addEventListener("click", function () {
 /* ---------- Au chargement de la page ---------- */
 // On démarre avec un mood d'exemple pour que la page ne soit jamais vide.
 chargerThemeMemorise();
+afficherValeurHue();
 choisirMoods(Moods.parId("mysterieux"), null, null);
