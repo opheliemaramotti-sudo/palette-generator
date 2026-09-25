@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Générateur de palette moodboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Les scripts (js/*.js) seront ajoutés ici au fil des étapes, avec "defer" -->
+</head>
+<body>
+
+  <main class="page">
+
+    <!-- ========== EN-TÊTE ========== -->
+    <header class="entete">
+      <h1 class="entete__titre">Générateur de palette moodboard</h1>
+      <p class="entete__sous-titre">Tape une émotion, une ambiance… et laisse venir les couleurs.</p>
+    </header>
+
+    <!-- ========== BARRE DE RECHERCHE ========== -->
+    <form class="recherche" id="formulaire-recherche" autocomplete="off">
+      <label class="visuellement-cache" for="champ-mood">Émotion ou ambiance</label>
+      <input
+        class="recherche__champ"
+        id="champ-mood"
+        type="search"
+        placeholder="mélancolique, serein, energetic…"
+      >
+      <button class="bouton bouton--principal" type="submit">Générer</button>
+    </form>
+
+    <!-- Zone de message (mot inconnu, suggestions…) — vide pour l'instant -->
+    <p class="message" id="message" aria-live="polite"></p>
+
+    <!-- ========== PALETTE 3x3 ========== -->
+    <section class="bloc" aria-labelledby="titre-palette">
+      <div class="bloc__entete">
+        <h2 class="bloc__titre" id="titre-palette">Mystérieux</h2>
+        <button class="bouton" id="bouton-regenerer" type="button">Régénérer</button>
+      </div>
+
+      <!-- Couleurs factices (références "Mystérieux") en attendant la génération -->
+      <div class="grille" id="grille">
+        <button class="case" type="button" style="background:#351E28; color:#FFFFFF"><span class="case__hex">#351E28</span></button>
+        <button class="case" type="button" style="background:#5B1E32; color:#FFFFFF"><span class="case__hex">#5B1E32</span></button>
+        <button class="case" type="button" style="background:#42273B; color:#FFFFFF"><span class="case__hex">#42273B</span></button>
+        <button class="case" type="button" style="background:#7A4A66; color:#FFFFFF"><span class="case__hex">#7A4A66</span></button>
+        <button class="case" type="button" style="background:#9C6B85; color:#000000"><span class="case__hex">#9C6B85</span></button>
+        <button class="case" type="button" style="background:#ABC8C0; color:#000000"><span class="case__hex">#ABC8C0</span></button>
+        <button class="case" type="button" style="background:#B7E1DA; color:#000000"><span class="case__hex">#B7E1DA</span></button>
+        <button class="case" type="button" style="background:#E8DDE3; color:#000000"><span class="case__hex">#E8DDE3</span></button>
+        <button class="case" type="button" style="background:#140A12; color:#FFFFFF"><span class="case__hex">#140A12</span></button>
+      </div>
+    </section>
+
+    <!-- ========== BARRE HUE ========== -->
+    <section class="bloc" aria-labelledby="titre-hue">
+      <div class="bloc__entete">
+        <h2 class="bloc__titre" id="titre-hue">Teinte</h2>
+        <output class="valeur" id="valeur-hue" for="curseur-hue">0°</output>
+      </div>
+      <div class="hue">
+        <input
+          class="hue__curseur"
+          id="curseur-hue"
+          type="range"
+          min="-180"
+          max="180"
+          step="1"
+          value="0"
+          aria-label="Décalage de teinte"
+        >
+        <button class="bouton" id="bouton-reset-hue" type="button">Remettre à 0</button>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>
