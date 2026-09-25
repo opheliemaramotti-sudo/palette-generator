@@ -52,6 +52,13 @@ var Palette = (function () {
   }
 
 
+  // Vrai si la teinte est dans la zone des jaunes (entre 40° et 80°).
+  function estUnJaune(teinte) {
+    var h = Couleurs.normaliserTeinte(teinte);
+    return h >= 40 && h <= 80;
+  }
+
+
   /* ---------- Fabrication d'une couleur ---------- */
 
   // Assemble une couleur HSL "propre" (teinte bouclée, bornes respectées).
@@ -85,7 +92,8 @@ var Palette = (function () {
 
   // 3 tons moyens placés selon l'harmonie du mood.
   function creerTonsMoyens(mood, teinteDominante) {
-    var ecarts = ECARTS_HARMONIE[mood.harmonie];
+    // L'harmonie est soit un nom ("triadique"…), soit des écarts sur mesure ([100, -145]).
+    var ecarts = Array.isArray(mood.harmonie) ? mood.harmonie : ECARTS_HARMONIE[mood.harmonie];
     var saturation = tirer(mood.saturation);
     return [
       creerCouleur("moyen", "Dominante", teinteDominante,
@@ -114,13 +122,19 @@ var Palette = (function () {
     }
 
     var luminosite = tirer(reglage.luminosite);
+    var teinte2 = varier(teinte + 18, 4);
     // Le 2e accent est une variation du 1er : teinte voisine, luminosité
-    // décalée vers le milieu pour qu'on distingue bien les deux.
+    // décalée vers le milieu pour qu'on distingue bien les deux…
     var luminosite2 = luminosite > 50 ? luminosite - 14 : luminosite + 14;
+    // … sauf dans les jaunes : un jaune assombri vire à l'olive "boueux",
+    // alors on l'éclaircit toujours.
+    if (estUnJaune(teinte2)) {
+      luminosite2 = luminosite + 14;
+    }
 
     return [
       creerCouleur("accent", "Accent", varier(teinte, 4), saturation, luminosite, false),
-      creerCouleur("accent", "Accent doux", varier(teinte + 18, 4), saturation * 0.8, luminosite2, false)
+      creerCouleur("accent", "Accent doux", teinte2, saturation * 0.8, luminosite2, false)
     ];
   }
 

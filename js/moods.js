@@ -7,7 +7,9 @@
    Les réglages d'un mood :
    - nom          : nom affiché
    - mots         : synonymes FR / EN (accents et majuscules sans importance,
-                    le nom du mood est ajouté automatiquement)
+                    le nom du mood est ajouté automatiquement). Un même mot peut
+                    appartenir à plusieurs moods ("cannelle" : Automnal et Gourmand) :
+                    l'application en tire un au hasard.
    - teinte       : [min, max] plage de teinte de la couleur dominante (0-360°).
                     Le max peut dépasser 360 pour « traverser » le rouge :
                     [350, 365] = de 350° à 5°.
@@ -15,6 +17,7 @@
    - luminosite   : [min, max] luminosité des 3 tons moyens (0-100 %)
    - harmonie     : place des tons secondaire et tertiaire sur le cercle
                     "analogue" | "complementaire" | "complementaire-divisee" | "triadique"
+                    ou des écarts sur mesure, en degrés : [100, -145]
    - accent       : les 2 accents. "decalage" = écart de teinte par rapport
                     à la dominante (180 = pile à l'opposé)
    - sombres      : les 2 sombres teintés (decalage 0 = teintés par la dominante)
@@ -117,13 +120,14 @@ var Moods = (function () {
     /* ================= Émotions ================= */
 
     {
+      // Recalé sur tes références : rose vif, orange, lime acide, cyan, violet outremer
       nom: "Joyeux",
-      mots: ["joyeuse", "joie", "joy", "joyful", "happy", "heureux", "heureuse", "bonheur", "gai", "gaieté", "cheerful", "fun"],
-      teinte: [35, 50], saturation: [70, 90], luminosite: [55, 70],
-      harmonie: "triadique",
-      accent:  { decalage: 150, saturation: [60, 80], luminosite: [50, 60] },   // turquoise
-      sombres: { decalage: 0,   saturation: [40, 60], luminosite: [14, 22] },
-      clairs:  { decalage: 0,   saturation: [80, 100], luminosite: [88, 93] },
+      mots: ["joyeuse", "joie", "joy", "joyful", "happy", "heureux", "heureuse", "bonheur", "gai", "gaieté", "cheerful", "fun", "playful", "uplifting"],
+      teinte: [325, 335], saturation: [85, 100], luminosite: [55, 68],         // rose vif
+      harmonie: [100, -145],                                                   // lime acide + cyan
+      accent:  { decalage: 55,  saturation: [92, 100], luminosite: [52, 60] },  // orange vif
+      sombres: { decalage: -80, saturation: [70, 95],  luminosite: [12, 26] },  // indigo / violet
+      clairs:  { decalage: 20,  saturation: [75, 95],  luminosite: [84, 92] },  // rose pastel, pêche
       composition: "halo"
     },
     {
@@ -148,7 +152,8 @@ var Moods = (function () {
     },
     {
       nom: "Romantique",
-      mots: ["romantic", "romance", "amour", "amoureux", "amoureuse", "love", "lovely", "tendresse", "valentin", "valentine"],
+      mots: ["romantic", "romance", "amour", "amoureux", "amoureuse", "love", "lovely", "tendresse", "valentin", "valentine",
+             "rose", "pink", "vieux rose", "rose poudré", "rose cendré", "rose fané", "rose fumé", "rose brûlé", "bois de rose", "mauve rosé", "rose thé", "pivoine"],
       teinte: [340, 355], saturation: [25, 45], luminosite: [60, 78],          // rose poudré
       harmonie: "analogue",
       accent:  { decalage: 110, saturation: [15, 25], luminosite: [70, 80] },   // sauge pâle
@@ -251,7 +256,8 @@ var Moods = (function () {
     },
     {
       nom: "Automnal",
-      mots: ["automne", "autumn", "autumnal", "fall", "feuilles", "leaves", "rouille", "rust", "cannelle"],
+      mots: ["automne", "autumn", "autumnal", "fall", "feuilles", "leaves", "rouille", "rust", "cannelle",
+             "renard", "écureuil", "biche", "faon", "cerf", "ours", "loutre", "castor", "alezan", "bai", "moineau", "chouette", "cèpe", "champignon", "feuille morte", "châtaigne", "gland", "marron", "pomme de pin"],
       teinte: [15, 30], saturation: [45, 65], luminosite: [30, 50],            // rouille
       harmonie: "analogue",
       accent:  { decalage: 50, saturation: [45, 60], luminosite: [35, 48] },    // olive / moutarde
@@ -260,13 +266,14 @@ var Moods = (function () {
       composition: "coin"
     },
     {
+      // Calé sur ta référence Old Lace / Grapefruit Pink / Apricot Cream / Turquoise / Cerulean
       nom: "Estival",
       mots: ["été", "summer", "summery", "vacances", "holiday", "plage", "beach", "sable"],
-      teinte: [180, 195], saturation: [60, 80], luminosite: [45, 60],          // turquoise
-      harmonie: "complementaire",
-      accent:  { decalage: 180, saturation: [80, 95], luminosite: [62, 70] },   // corail
-      sombres: { decalage: 0,   saturation: [50, 70], luminosite: [12, 20] },
-      clairs:  { decalage: 225, saturation: [60, 80], luminosite: [84, 90] },   // sable
+      teinte: [170, 180], saturation: [70, 85], luminosite: [48, 58],          // turquoise
+      harmonie: [22, -140],                                                    // céruléen + abricot
+      accent:  { decalage: 185,  saturation: [90, 100], luminosite: [66, 74] }, // pamplemousse rose
+      sombres: { decalage: 25,   saturation: [55, 70], luminosite: [14, 22] },  // céruléen profond
+      clairs:  { decalage: -135, saturation: [80, 100], luminosite: [86, 95] }, // abricot, old lace
       composition: "halo"
     },
     {
@@ -427,7 +434,8 @@ var Moods = (function () {
     },
     {
       nom: "Vintage",
-      mots: ["ancien", "ancienne", "antique", "old", "sépia", "sepia", "patine", "brocante", "old school", "oldschool", "époque"],
+      mots: ["ancien", "ancienne", "antique", "old", "sépia", "sepia", "patine", "brocante", "old school", "oldschool", "époque",
+             "vieux papier", "parchemin"],
       teinte: [30, 40], saturation: [20, 35], luminosite: [45, 62],            // sépia
       harmonie: "complementaire",
       accent:  { decalage: 150, saturation: [20, 30], luminosite: [45, 55] },   // teal poussiéreux
@@ -457,7 +465,8 @@ var Moods = (function () {
     },
     {
       nom: "Pastel",
-      mots: ["pastels", "candy", "bonbon", "bonbons", "sucre", "sugar", "dragée"],
+      mots: ["pastels", "candy", "bonbon", "bonbons", "sucre", "sugar", "dragée",
+             "barbe à papa", "guimauve", "macaron", "meringue", "sorbet", "sucre rose", "crème de rose", "nougat rose", "loukoum", "rose pastel", "rose pâle", "rose dragée"],
       teinte: [170, 190], saturation: [45, 65], luminosite: [78, 86],          // menthe-bleu
       harmonie: "triadique",
       accent:  { decalage: 160, saturation: [60, 80], luminosite: [82, 88] },   // rose
@@ -609,18 +618,21 @@ var Moods = (function () {
       composition: "halo"
     },
     {
+      // Calé sur ta référence Irrigo Purple / Exodus Fruit / Jordy Blue / Mintie / Purple Sand / Ultraviolet Berl
       nom: "Fairy kei",
-      mots: ["fairy", "fée", "fées", "licorne", "unicorn"],
-      teinte: [270, 290], saturation: [55, 75], luminosite: [78, 86],          // lavande
-      harmonie: "triadique",
-      accent:  { decalage: -120, saturation: [50, 70], luminosite: [78, 84] },  // menthe
-      sombres: { decalage: 0,    saturation: [25, 40], luminosite: [30, 38] },
-      clairs:  { decalage: 65,   saturation: [70, 90], luminosite: [88, 93] },  // rose bébé
+      mots: ["fairy", "fée", "fées", "licorne", "unicorn",
+             "arcade", "peluche", "peluches", "plush", "claw machine", "fête foraine", "kawaii"],
+      teinte: [260, 270], saturation: [70, 90], luminosite: [55, 68],          // irrigo purple
+      harmonie: [-35, 32],                                                     // exodus fruit + ultraviolet berl
+      accent:  { decalage: -122, saturation: [60, 75], luminosite: [78, 84] },  // mintie
+      sombres: { decalage: 0,    saturation: [40, 60], luminosite: [22, 30] },
+      clairs:  { decalage: -10,  saturation: [65, 80], luminosite: [82, 90] },  // purple sand
       composition: "halo"
     },
     {
       nom: "Cherry core",
-      mots: ["cherry", "cerise", "cerises", "cherries"],
+      mots: ["cherry", "cerise", "cerises", "cherries",
+             "framboise", "rose sauvage"],
       teinte: [350, 358], saturation: [70, 85], luminosite: [38, 50],          // rouge cerise
       harmonie: "complementaire",
       accent:  { decalage: 125, saturation: [45, 60], luminosite: [35, 45] },   // vert queue de cerise
@@ -630,7 +642,8 @@ var Moods = (function () {
     },
     {
       nom: "Coquette",
-      mots: ["coquettecore", "nymphette", "nœud", "nœuds", "bow", "bows", "ribbon", "ruban", "rubans", "girly", "féminin", "féminine", "feminine", "rose", "pink"],
+      mots: ["coquettecore", "nymphette", "nœud", "nœuds", "bow", "bows", "ribbon", "ruban", "rubans", "girly", "féminin", "féminine", "feminine", "rose", "pink",
+             "satin", "tulle", "dentelle", "ballerine", "layette", "nacre", "perle rosée", "coquillage", "organza", "blush"],
       teinte: [340, 355], saturation: [55, 75], luminosite: [80, 88],          // rose pâle
       harmonie: "analogue",
       accent:  { decalage: 15, saturation: [70, 85], luminosite: [45, 55] },    // rouge ruban
@@ -639,14 +652,199 @@ var Moods = (function () {
       composition: "halo"
     },
     {
+      // Calé sur ta référence Cherry / Blossom Pink / Truffle / Ivory
       nom: "Dark coquette",
       mots: ["coquette sombre", "coquette noire"],
-      teinte: [345, 355], saturation: [45, 60], luminosite: [25, 38],          // bordeaux
+      teinte: [348, 358], saturation: [40, 55], luminosite: [25, 35],          // cherry (bordeaux)
       harmonie: "analogue",
-      accent:  { decalage: 5,  saturation: [40, 60], luminosite: [72, 80] },    // blush
-      sombres: { decalage: 0,  saturation: [30, 45], luminosite: [5, 10] },
-      clairs:  { decalage: 20, saturation: [30, 45], luminosite: [86, 91] },    // dentelle crème
+      accent:  { decalage: 2,  saturation: [55, 70], luminosite: [75, 82] },    // blossom pink
+      sombres: { decalage: 20, saturation: [30, 40], luminosite: [12, 20] },    // truffle
+      clairs:  { decalage: 30, saturation: [55, 70], luminosite: [88, 93] },    // ivory
       composition: "vignette"
+    },
+
+    /* ================= Bruns, terres et matières ================= */
+
+    {
+      nom: "Gourmand",
+      mots: ["brun", "brown", "chocolat", "chocolat noir", "chocolate", "cacao", "moka", "mocha", "expresso", "espresso", "café", "coffee", "café au lait",
+             "noisette", "praliné", "caramel", "toffee", "pain d'épices", "cannelle", "brioche", "pain grillé",
+             "noix de pécan", "marron glacé", "brownie", "sucre roux", "mélasse", "réglisse", "datte", "figue sèche",
+             "muscade", "clou de girofle", "tamarin"],
+      teinte: [20, 32], saturation: [35, 55], luminosite: [22, 45],            // chocolat / caramel
+      harmonie: [12, -15],                                                    // analogue serré : reste dans les bruns
+      accent:  { decalage: 12, saturation: [60, 78], luminosite: [48, 58] },    // caramel doré
+      sombres: { decalage: 0,  saturation: [35, 50], luminosite: [7, 13] },     // chocolat noir
+      clairs:  { decalage: 8,  saturation: [30, 50], luminosite: [80, 88] },    // crème, café au lait
+      composition: "halo"
+    },
+    {
+      nom: "Boisé",
+      mots: ["brun", "brown", "bois", "wood", "woody", "chêne", "noyer", "acajou", "teck", "ébène", "merisier", "palissandre",
+             "wengé", "séquoia", "hêtre", "écorce", "sciure", "bois flotté", "liège", "tabac", "cigare",
+             "brou de noix", "sous-bois", "vieux parquet", "poutre ancienne", "havane"],
+      teinte: [22, 34], saturation: [25, 42], luminosite: [22, 42],            // brun bois
+      harmonie: [15, -12],                                                    // analogue serré : reste dans les bruns
+      accent:  { decalage: 70, saturation: [18, 30], luminosite: [30, 40] },    // vert mousse (sous-bois)
+      sombres: { decalage: -5, saturation: [15, 28], luminosite: [6, 12] },     // ébène, wengé
+      clairs:  { decalage: 8,  saturation: [15, 28], luminosite: [72, 82] },    // bois flotté, liège
+      composition: "vignette"
+    },
+    {
+      nom: "Terracotta",
+      mots: ["terre cuite", "terre de sienne", "sienna", "latérite", "rouille", "rust", "brique", "brick", "ocre brun", "ocre",
+             "adobe", "poterie", "pottery", "argile", "clay", "grès"],
+      teinte: [12, 22], saturation: [45, 65], luminosite: [40, 55],            // brun-orangé chaud
+      harmonie: [12, -10],                                                    // analogue serré : ocre et brun-rouge
+      accent:  { decalage: 25, saturation: [45, 60], luminosite: [55, 65] },    // ocre
+      sombres: { decalage: -5, saturation: [40, 55], luminosite: [12, 18] },    // brun-rouge profond
+      clairs:  { decalage: 12, saturation: [30, 45], luminosite: [80, 88] },    // adobe, sable
+      composition: "horizon"
+    },
+    {
+      nom: "Terreux",
+      mots: ["brun", "brown", "terre", "earth", "earthy", "terre d'ombre", "glaise", "limon", "tourbe", "humus", "terreau",
+             "boue", "boue séchée", "sable mouillé", "bitume", "schiste"],
+      teinte: [22, 35], saturation: [12, 28], luminosite: [25, 45],            // brun froid et éteint
+      harmonie: [10, -15],                                                    // analogue serré : reste dans les bruns
+      accent:  { decalage: -12, saturation: [35, 50], luminosite: [40, 50] },   // terracotta sourde
+      sombres: { decalage: 0,   saturation: [10, 20], luminosite: [6, 12] },    // tourbe, bitume
+      clairs:  { decalage: 0,   saturation: [12, 25], luminosite: [70, 80] },   // argile claire
+      composition: "horizon"
+    },
+    {
+      // Calé sur ta référence Camel Coat / Boho / Rubine / Tamarind / Italian Roast
+      nom: "Cuir",
+      mots: ["leather", "daim", "suède", "suede", "chamois", "jute", "kraft", "parchemin", "papyrus", "vieux papier",
+             "lin brut", "taupe", "châtain", "mordoré", "bistre", "sépia"],
+      teinte: [30, 40], saturation: [20, 35], luminosite: [35, 55],            // camel, brun boho
+      harmonie: [10, -35],                                                    // brun + rubine (bordeaux)
+      accent:  { decalage: -40, saturation: [30, 45], luminosite: [32, 42] },   // rubine (bordeaux)
+      sombres: { decalage: -45, saturation: [45, 60], luminosite: [9, 15] },    // tamarind, italian roast
+      clairs:  { decalage: 0,   saturation: [25, 35], luminosite: [68, 80] },   // camel coat
+      composition: "vignette"
+    },
+
+    {
+      // Calé sur ta référence Honeydew / Celadon / Yellow Green / Fern / Dark Khaki
+      nom: "Botanique",
+      mots: ["vert", "verte", "green", "végétal", "végétale", "botanical", "plante", "plantes", "plant", "plants",
+             "feuillage", "foliage", "fougère", "fern", "céladon", "celadon", "chlorophylle", "herbier", "serre", "greenhouse"],
+      teinte: [115, 130], saturation: [35, 50], luminosite: [30, 48],          // fern
+      harmonie: [-50, -5],                                                     // yellow green + céladon
+      accent:  { decalage: -50, saturation: [55, 70], luminosite: [52, 60] },   // yellow green
+      sombres: { decalage: -60, saturation: [80, 100], luminosite: [6, 10] },   // dark khaki
+      clairs:  { decalage: -5,  saturation: [35, 55], luminosite: [80, 94] },   // céladon, honeydew
+      composition: "horizon"
+    },
+
+    {
+      // Calé sur ta référence Prunelle / Amarklor Violet / Sugilite / Aztec Purple / Phenolphthalein / Magenta Smoke
+      nom: "Ultraviolet",
+      mots: ["violet", "violette", "purple", "pourpre", "uv", "améthyste", "amethyst", "prunelle", "prune", "plum",
+             "sugilite", "lavande électrique", "crépuscule urbain"],
+      teinte: [262, 272], saturation: [80, 95], luminosite: [30, 55],          // prunelle → sugilite
+      harmonie: [12, 25],                                                      // aztec purple + phenolphthalein
+      accent:  { decalage: 28, saturation: [95, 100], luminosite: [60, 68] },   // phenolphthalein (magenta)
+      sombres: { decalage: 0,  saturation: [80, 95],  luminosite: [12, 22] },
+      clairs:  { decalage: 15, saturation: [90, 100], luminosite: [80, 90] },   // magenta smoke
+      composition: "diagonale"
+    },
+    {
+      // Calé sur ta référence Cleansed / Shower / Joust Blue / Dodger Blue / Denim / Violaceous
+      nom: "Fraîcheur",
+      mots: ["frais", "fraîche", "fresh", "propre", "clean", "lessive", "laundry", "savon", "soap", "bain", "bath",
+             "douche", "shower", "hygiène", "linge", "eau", "water"],
+      teinte: [205, 218], saturation: [70, 90], luminosite: [45, 68],          // joust blue, dodger blue
+      harmonie: [-25, 5],                                                      // shower (aqua) + denim
+      accent:  { decalage: 85, saturation: [50, 60], luminosite: [66, 72] },    // violaceous
+      sombres: { decalage: 0,  saturation: [50, 65], luminosite: [20, 30] },    // denim profond
+      clairs:  { decalage: -20, saturation: [15, 40], luminosite: [92, 96] },   // cleansed
+      composition: "halo"
+    },
+    {
+      // Calé sur ta référence Icy Blue / Azure Blue / Fresh Sky / French Blue / Charcoal Blue
+      nom: "Azur",
+      mots: ["bleu", "bleue", "blue", "azure", "ciel", "sky", "cobalt", "saphir", "sapphire", "bleuet", "outremer",
+             "ultramarine", "bleu roi", "french blue"],
+      teinte: [210, 220], saturation: [65, 80], luminosite: [45, 62],          // azure blue
+      harmonie: [-12, 12],                                                     // fresh sky + french blue
+      accent:  { decalage: 12, saturation: [35, 45], luminosite: [34, 42] },    // french blue
+      sombres: { decalage: 12, saturation: [15, 25], luminosite: [18, 26] },    // charcoal blue
+      clairs:  { decalage: 0,  saturation: [70, 85], luminosite: [80, 90] },    // icy blue
+      composition: "horizon"
+    },
+
+    /* ================= Roses ================= */
+
+    {
+      nom: "Bouquet",
+      mots: ["rose", "pink", "rose thé", "pivoine", "peony", "camélia", "fleur de cerisier", "magnolia", "hortensia", "bruyère",
+             "azalée", "rhododendron", "géranium", "cyclamen", "orchidée", "lilas rosé", "bougainvillier",
+             "nénuphar", "jacinthe", "œillet", "églantine", "cosmos", "lotus", "rose sauvage"],
+      teinte: [330, 350], saturation: [45, 70], luminosite: [62, 78],          // roses floraux
+      harmonie: "complementaire",
+      accent:  { decalage: 150, saturation: [30, 45], luminosite: [38, 48] },   // vert feuille
+      sombres: { decalage: 10,  saturation: [35, 50], luminosite: [18, 26] },   // prune
+      clairs:  { decalage: 0,   saturation: [50, 70], luminosite: [88, 93] },
+      composition: "halo"
+    },
+    {
+      // Calé sur ta référence Senga Sengana / Mandarin / Daisy Desi / Vanilla Cream / Kiwi Colada / Tropicana
+      nom: "Fruité",
+      mots: ["fruit", "fruits rouges", "framboise", "fraise", "strawberry", "litchi", "pastèque", "pamplemousse rose",
+             "grenade", "rhubarbe", "cerise",
+             "pâtisserie", "dessert", "gâteau", "cake", "tarte", "fraisier", "kiwi", "mandarine", "tutti frutti"],
+      teinte: [352, 358], saturation: [85, 100], luminosite: [35, 50],         // senga sengana (fraise)
+      harmonie: [25, 75],                                                      // mandarine + kiwi
+      accent:  { decalage: 80, saturation: [70, 82], luminosite: [32, 40] },    // tropicana (vert)
+      sombres: { decalage: 0,  saturation: [70, 90], luminosite: [14, 22] },
+      clairs:  { decalage: 50, saturation: [85, 100], luminosite: [78, 94] },   // daisy desi, vanilla cream
+      composition: "halo"
+    },
+    {
+      nom: "Nude",
+      mots: ["blush", "chair", "peau", "peau de pêche", "poudre", "fard", "cachemire", "velours", "soie sauvage", "rouge à lèvres"],
+      teinte: [10, 22], saturation: [25, 40], luminosite: [62, 78],            // beige rosé, chair
+      harmonie: "analogue",
+      accent:  { decalage: -15, saturation: [55, 70], luminosite: [38, 46] },   // rouge à lèvres
+      sombres: { decalage: 0,   saturation: [12, 20], luminosite: [22, 30] },   // taupe
+      clairs:  { decalage: 0,   saturation: [35, 55], luminosite: [88, 93] },
+      composition: "halo"
+    },
+    {
+      nom: "Coucher de soleil",
+      mots: ["sunset", "aurore", "crépuscule", "dusk", "nuage rosé", "flamant rose", "flamingo", "corail", "coral",
+             "saumon", "salmon", "crevette", "pêche", "peach", "abricot rosé", "rose saumoné"],
+      teinte: [5, 20], saturation: [65, 85], luminosite: [62, 72],             // corail, saumon
+      harmonie: [25, -40],                                                      // pêche orangée + rose
+      accent:  { decalage: -90, saturation: [35, 50], luminosite: [65, 75] },   // lilas du ciel
+      sombres: { decalage: 220, saturation: [35, 50], luminosite: [12, 20] },   // bleu nuit
+      clairs:  { decalage: 25,  saturation: [80, 95], luminosite: [86, 91] },
+      composition: "horizon"
+    },
+    {
+      // Calé sur ta référence Honeydew / Dust Grey / Soft Blossom / Petal Pink / Bright Lavender
+      nom: "Quartz rose",
+      mots: ["quartz", "rose quartz", "rhodochrosite", "opale", "tourmaline", "sable rosé", "terre cuite rosée",
+             "granit rose", "lac rose", "galet rose", "grenat pâle", "rose glacé", "rose nacré", "cristal", "crystal"],
+      teinte: [318, 335], saturation: [40, 55], luminosite: [65, 80],          // soft blossom, petal pink
+      harmonie: "analogue",
+      accent:  { decalage: -45, saturation: [40, 50], luminosite: [58, 66] },   // bright lavender
+      sombres: { decalage: -30, saturation: [10, 18], luminosite: [28, 36] },   // gris granit rosé
+      clairs:  { decalage: 25,  saturation: [10, 20], luminosite: [86, 95] },   // dust grey
+      composition: "halo"
+    },
+    {
+      nom: "Fuchsia",
+      mots: ["rose", "pink", "hot pink", "fuchsia", "magenta", "rose néon", "rose électrique", "rose bonbon", "rouge à lèvres",
+             "gloss", "chewing-gum", "bonbon acidulé"],
+      teinte: [315, 330], saturation: [85, 100], luminosite: [50, 62],         // rose vif
+      harmonie: "analogue",
+      accent:  { decalage: 35,  saturation: [85, 100], luminosite: [52, 60] },  // rouge cerise vif
+      sombres: { decalage: -40, saturation: [60, 80], luminosite: [10, 18] },   // violet profond
+      clairs:  { decalage: 0,   saturation: [80, 100], luminosite: [86, 92] },
+      composition: "diagonale"
     }
   ];
 
@@ -677,8 +875,9 @@ var Moods = (function () {
 
   /* ---------- Index de recherche ---------- */
 
-  // On prépare une fois pour toutes un "annuaire" : mot compact → mood.
-  // Ex : INDEX["darkacademia"] = (le mood Dark academia)
+  // On prépare une fois pour toutes un "annuaire" : mot compact → liste de moods.
+  // Ex : INDEX["darkacademia"] = [Dark academia]
+  //      INDEX["cannelle"]     = [Automnal, Gourmand]   (mot partagé)
   var INDEX = {};
   var NB_MOTS_MAX = 1;   // nombre de mots du plus long synonyme ("clair de lune" = 3)
 
@@ -687,7 +886,9 @@ var Moods = (function () {
       mood.id = normaliser(mood.nom).replace(/ /g, "-");   // ex : "dark-academia"
       var tousLesMots = [mood.nom].concat(mood.mots);
       tousLesMots.forEach(function (mot) {
-        INDEX[compacter(mot)] = mood;
+        var cle = compacter(mot);
+        if (!INDEX[cle]) INDEX[cle] = [];
+        if (INDEX[cle].indexOf(mood) === -1) INDEX[cle].push(mood);
         NB_MOTS_MAX = Math.max(NB_MOTS_MAX, normaliser(mot).split(" ").length);
       });
     });
@@ -724,7 +925,8 @@ var Moods = (function () {
 
   /* ---------- Reconnaissance d'un mot isolé ---------- */
 
-  // Pour un mot seul qui n'est pas pile dans l'index, on tolère :
+  // Pour un mot seul qui n'est pas pile dans l'index, on tolère
+  // (et on renvoie la liste des moods de ce mot, comme l'index) :
   // 1. un mot plus long qui commence par un synonyme ("romantiques", "gothiques")
   // 2. le début d'un synonyme d'au moins 5 lettres ("melanc" → mélancolique)
   // 3. une petite faute de frappe (1 lettre, ou 2 pour les mots longs)
@@ -751,36 +953,44 @@ var Moods = (function () {
 
   /* ---------- Recherche principale ---------- */
 
-  // Lit une phrase et renvoie la liste des moods reconnus, dans l'ordre.
-  // "nostalgique et serein" → [Nostalgique, Serein]
+  // Lit une phrase et renvoie, dans l'ordre, chaque expression reconnue
+  // avec la liste des moods qui la contiennent ("candidats").
+  // "cannelle et serein" → [
+  //   { expression: "cannelle", candidats: [Automnal, Gourmand] },
+  //   { expression: "serein",   candidats: [Serein] }
+  // ]
   // Les mots inconnus ("et", "un peu"…) sont simplement ignorés.
+  // C'est app.js qui choisit ensuite un mood parmi les candidats.
   function trouverMoods(texte) {
     var mots = normaliser(texte).split(" ").filter(Boolean);
     var trouves = [];
     var i = 0;
 
     while (i < mots.length) {
-      var mood = null;
+      var candidats = null;
       var nbMotsUtilises = 1;
 
       // On essaie d'abord les groupes de mots les plus longs
-      // ("dark academia" avant "dark")
+      // ("dark academia" avant "dark", "rose poudré" avant "rose")
       for (var n = Math.min(NB_MOTS_MAX, mots.length - i); n >= 1; n--) {
         var groupe = mots.slice(i, i + n).join("");
         if (INDEX[groupe]) {
-          mood = INDEX[groupe];
+          candidats = INDEX[groupe];
           nbMotsUtilises = n;
           break;
         }
       }
 
       // Sinon, tolérance sur le mot seul (pluriel, début de mot, faute de frappe)
-      if (!mood) {
-        mood = reconnaitreApproximativement(mots[i]);
+      if (!candidats) {
+        candidats = reconnaitreApproximativement(mots[i]);
       }
 
-      if (mood && trouves.indexOf(mood) === -1) {
-        trouves.push(mood);
+      if (candidats) {
+        trouves.push({
+          expression: mots.slice(i, i + nbMotsUtilises).join(" "),
+          candidats: candidats
+        });
       }
       i += nbMotsUtilises;
     }

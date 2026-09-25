@@ -41,45 +41,72 @@ function afficherPalette(couleurs) {
 
 /* ---------- Messages ---------- */
 
-// Affiche un texte simple sous la barre de recherche.
-function afficherMessage(texte) {
+// Affiche un texte sous la barre de recherche, suivi (si besoin) de moods
+// cliquables. "quandOnClique" dit quoi faire du mood cliqué.
+function afficherMessage(texte, moodsCliquables, quandOnClique) {
   zoneMessage.textContent = texte;
-}
+  if (!moodsCliquables) return;
 
-// Mot inconnu : message doux + 3 moods proches cliquables.
-function afficherSuggestions(texteTape, suggestions) {
-  zoneMessage.textContent = "Je ne connais pas encore « " + texteTape + " »… Peut-être : ";
-
-  suggestions.forEach(function (mood, index) {
+  moodsCliquables.forEach(function (mood) {
     var bouton = document.createElement("button");
     bouton.type = "button";
     bouton.className = "suggestion";
     bouton.textContent = mood.nom;
     bouton.addEventListener("click", function () {
-      champMood.value = mood.nom;
-      choisirMoods(mood, null);
+      quandOnClique(mood);
     });
+    zoneMessage.appendChild(document.createTextNode(" "));
     zoneMessage.appendChild(bouton);
+  });
+}
 
-    if (index < suggestions.length - 1) {
-      zoneMessage.appendChild(document.createTextNode(" "));
-    }
+// Mot inconnu : message doux + 3 moods proches cliquables.
+function afficherSuggestions(texteTape, suggestions) {
+  afficherMessage("Je ne connais pas encore « " + texteTape + " »… Peut-être :", suggestions, function (mood) {
+    champMood.value = mood.nom;
+    choisirMoods(mood, null, null);
   });
 }
 
 
 /* ---------- Choix du mood ---------- */
 
+// Un élément au hasard dans une liste. Ex : tirerAuHasard([Automnal, Gourmand])
+function tirerAuHasard(liste) {
+  return liste[Math.floor(Math.random() * liste.length)];
+}
+
+// "de" ou "d'" selon la première lettre : "de Serein", mais "d'Azur", "d'Énergique".
+function de(nom) {
+  var premiereLettre = Moods.normaliser(nom).charAt(0);
+  return "aeiouyh".indexOf(premiereLettre) !== -1 ? "d'" + nom : "de " + nom;
+}
+
 // Enregistre le(s) mood(s) choisi(s) et met la page à jour.
-function choisirMoods(principal, accent) {
+// - principal  : le mood qui domine
+// - accent     : le mood qui colore l'accent (ou null)
+// - motPartage : si le mot tapé appartient à plusieurs moods,
+//                { expression: "cannelle", candidats: [Automnal, Gourmand] }, sinon null
+function choisirMoods(principal, accent, motPartage) {
   etat.moodPrincipal = principal;
   etat.moodAccent = accent;
 
   titrePalette.textContent = principal.nom;
+
+  var texte = "";
   if (accent) {
-    afficherMessage(principal.nom + ", avec une touche de " + accent.nom + " dans l'accent.");
+    texte = principal.nom + ", avec une touche " + de(accent.nom) + " dans l'accent.";
+  }
+
+  if (motPartage) {
+    // "Voir aussi" : les autres moods qui contiennent le mot tapé
+    var autres = motPartage.candidats.filter(function (mood) { return mood !== principal; });
+    texte += (texte ? " " : "") + "« " + motPartage.expression + " » : voir aussi";
+    afficherMessage(texte, autres, function (mood) {
+      choisirMoods(mood, accent, motPartage);
+    });
   } else {
-    afficherMessage("");
+    afficherMessage(texte);
   }
 
   etat.paletteDeBase = Palette.generer(principal, accent);
@@ -93,15 +120,27 @@ function lancerRecherche(texte) {
     return;
   }
 
-  var moods = Moods.trouverMoods(texte);
+  var groupes = Moods.trouverMoods(texte);
 
-  if (moods.length === 0) {
+  if (groupes.length === 0) {
     afficherSuggestions(texte.trim(), Moods.suggerer(texte, 3));
     return;
   }
 
-  // Le premier mood domine, le second (s'il existe) influence l'accent.
-  choisirMoods(moods[0], moods[1] || null);
+  // Le premier mot reconnu donne le mood principal (tiré au hasard
+  // s'il appartient à plusieurs moods).
+  var premier = groupes[0];
+  var principal = tirerAuHasard(premier.candidats);
+  var motPartage = premier.candidats.length > 1 ? premier : null;
+
+  // Le mot reconnu suivant (s'il existe) influence l'accent.
+  var accent = null;
+  for (var i = 1; i < groupes.length && !accent; i++) {
+    var possibles = groupes[i].candidats.filter(function (mood) { return mood !== principal; });
+    if (possibles.length > 0) accent = tirerAuHasard(possibles);
+  }
+
+  choisirMoods(principal, accent, motPartage);
 }
 
 
@@ -165,4 +204,4 @@ boutonTheme.addEventListener("click", function () {
 /* ---------- Au chargement de la page ---------- */
 // On démarre avec un mood d'exemple pour que la page ne soit jamais vide.
 chargerThemeMemorise();
-choisirMoods(Moods.parId("mysterieux"), null);
+choisirMoods(Moods.parId("mysterieux"), null, null);
