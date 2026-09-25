@@ -327,15 +327,21 @@ body {
 
 .degrade__reglage {
   display: flex;
+  flex-wrap: wrap;           /* sur un écran étroit, le curseur passe à la ligne */
   align-items: center;
-  gap: 12px;
+  gap: 8px 12px;
   width: min(100%, 360px);
   color: var(--texte-doux);
   font-size: 0.9rem;
 }
 
+.degrade__reglage label {
+  white-space: nowrap;
+}
+
 .degrade__curseur {
   flex: 1;
+  min-width: 140px;
   accent-color: var(--texte);
 }
 
@@ -380,7 +386,50 @@ body {
 }
 
 
-/* ---------- 12. Mobile ---------- */
+/* ---------- 12. Grand écran : deux colonnes ---------- */
+/* Sur un écran large, le dégradé passe à droite de la palette et reste
+   visible (sticky) pendant qu'on défile ou qu'on joue avec la barre HUE. */
+@media (min-width: 1000px) {
+  .page {
+    max-width: 1120px;
+  }
+
+  .entete,
+  .recherche,
+  .message {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .espace-de-travail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-areas:
+      "palette degrade"
+      "hue     degrade"
+      "exports degrade";
+    align-items: start;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .espace-de-travail > .bloc {
+    margin-top: 0;
+  }
+
+  .bloc--palette { grid-area: palette; }
+  .bloc--hue     { grid-area: hue; }
+  .bloc--exports { grid-area: exports; }
+  .bloc--degrade {
+    grid-area: degrade;
+    position: sticky;
+    top: 16px;
+  }
+}
+
+
+/* ---------- 13. Mobile ---------- */
 @media (max-width: 520px) {
   .grille {
     gap: 8px;

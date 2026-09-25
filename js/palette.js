@@ -95,15 +95,20 @@ var Palette = (function () {
     // L'harmonie est soit un nom ("triadique"…), soit des écarts sur mesure ([100, -145]).
     var ecarts = Array.isArray(mood.harmonie) ? mood.harmonie : ECARTS_HARMONIE[mood.harmonie];
     var saturation = tirer(mood.saturation);
+
+    // La tertiaire, souvent plus éloignée sur le cercle, est adoucie pour ne
+    // pas voler la vedette aux accents. Quand elle est pile à l'opposé
+    // (harmonie complémentaire), on la désature nettement : elle devient un
+    // contrepoint discret (ex : le gris-vert "Ash Grey" du Mystérieux).
+    var douceurTertiaire = mood.harmonie === "complementaire" ? 0.45 : 0.75;
+
     return [
       creerCouleur("moyen", "Dominante", teinteDominante,
         saturation, varier(dansLaPlage(mood.luminosite, 0.5), 3), false),
       creerCouleur("moyen", "Secondaire", varier(teinteDominante + ecarts[0], 6),
         saturation * 0.9, varier(dansLaPlage(mood.luminosite, 0.15), 3), false),
-      // La tertiaire, souvent plus éloignée sur le cercle, est un peu adoucie
-      // pour ne pas voler la vedette aux accents.
       creerCouleur("moyen", "Tertiaire", varier(teinteDominante + ecarts[1], 6),
-        saturation * 0.75, varier(dansLaPlage(mood.luminosite, 0.85), 3), false)
+        saturation * douceurTertiaire, varier(dansLaPlage(mood.luminosite, 0.85), 3), false)
     ];
   }
 
