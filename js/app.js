@@ -12,6 +12,7 @@ var zoneMessage = document.getElementById("message");
 var titrePalette = document.getElementById("titre-palette");
 var grille = document.getElementById("grille");
 var boutonTheme = document.getElementById("bouton-theme");
+var boutonRegenerer = document.getElementById("bouton-regenerer");
 
 
 /* ---------- État de l'application ---------- */
@@ -33,9 +34,15 @@ function afficherPalette(couleurs) {
     var caseCouleur = cases[index];
     caseCouleur.style.background = hex;
     caseCouleur.style.color = Couleurs.couleurTexte(hex);   // noir ou blanc selon le contraste
+    caseCouleur.dataset.hex = hex;                           // mémorisé pour la copie
     caseCouleur.querySelector(".case__hex").textContent = hex;
-    caseCouleur.title = couleur.libelle;
+    caseCouleur.title = couleur.libelle + " — cliquer pour copier";
   });
+}
+
+// Redessine tout ce qui dépend des couleurs.
+function rafraichir() {
+  afficherPalette(etat.paletteDeBase);
 }
 
 
@@ -110,7 +117,7 @@ function choisirMoods(principal, accent, motPartage) {
   }
 
   etat.paletteDeBase = Palette.generer(principal, accent);
-  afficherPalette(etat.paletteDeBase);
+  rafraichir();
 }
 
 // Lance la recherche à partir du texte tapé.
@@ -149,6 +156,61 @@ function lancerRecherche(texte) {
 formulaireRecherche.addEventListener("submit", function (evenement) {
   evenement.preventDefault();   // empêche le rechargement de la page
   lancerRecherche(champMood.value);
+});
+
+
+/* ---------- Copie d'un HEX au clic ---------- */
+
+// Copie un texte dans le presse-papier. Renvoie une "promesse" : on peut
+// attendre la fin de la copie avec .then(...).
+function copierTexte(texte) {
+  // Méthode moderne (navigateurs récents, page en https ou ouverte en local)
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(texte).catch(function () {
+      return copierTexteAncienneMethode(texte);
+    });
+  }
+  return Promise.resolve(copierTexteAncienneMethode(texte));
+}
+
+// Méthode de secours : on sélectionne le texte dans un champ caché, puis "copier".
+function copierTexteAncienneMethode(texte) {
+  var champ = document.createElement("textarea");
+  champ.value = texte;
+  champ.setAttribute("readonly", "");
+  champ.style.position = "fixed";
+  champ.style.opacity = "0";
+  document.body.appendChild(champ);
+  champ.select();
+  document.execCommand("copy");
+  document.body.removeChild(champ);
+}
+
+// Retour visuel : "Copié" s'affiche à la place du HEX pendant un instant.
+function montrerCopie(caseCouleur) {
+  var etiquette = caseCouleur.querySelector(".case__hex");
+  etiquette.textContent = "Copié !";
+  caseCouleur.classList.add("case--copiee");
+  setTimeout(function () {
+    etiquette.textContent = caseCouleur.dataset.hex;   // le HEX actuel (il a pu changer entre-temps)
+    caseCouleur.classList.remove("case--copiee");
+  }, 1200);
+}
+
+grille.addEventListener("click", function (evenement) {
+  var caseCouleur = evenement.target.closest(".case");
+  if (!caseCouleur) return;
+  copierTexte(caseCouleur.dataset.hex).then(function () {
+    montrerCopie(caseCouleur);
+  });
+});
+
+
+/* ---------- Bouton Régénérer ---------- */
+// Même mood, nouvelle variation.
+boutonRegenerer.addEventListener("click", function () {
+  etat.paletteDeBase = Palette.generer(etat.moodPrincipal, etat.moodAccent);
+  rafraichir();
 });
 
 

@@ -236,6 +236,26 @@ body {
   font: inherit;
 }
 
+.case:hover {
+  transform: translateY(-2px);
+}
+
+.case:focus-visible {
+  outline: 3px solid var(--texte);
+  outline-offset: 3px;
+}
+
+/* Retour visuel après la copie */
+.case--copiee {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case {
+    transition: transform 0.15s ease;
+  }
+}
+
 /* Code HEX en bas à gauche de chaque case */
 .case__hex {
   position: absolute;
