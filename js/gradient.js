@@ -203,6 +203,31 @@ var Degrade = (function () {
   }
 
 
+  /* ---------- Position des taches ---------- */
+
+  // Calcule où vont les taches pour un mood, en fractions du cadre (0 à 1).
+  // Renvoie { fond: numéro de couleur, taches: [{ couleur, x, y, rayon }] }
+  // où rayon est une fraction de la hauteur.
+  // Utilisé pour le dessin ET pour l'export CSS : les deux restent identiques.
+  function calculerTaches(mood) {
+    var composition = COMPOSITIONS[mood.composition] || COMPOSITIONS.halo;
+
+    // Petits décalages propres à chaque mood : deux moods qui partagent
+    // une composition n'ont pas exactement le même dégradé.
+    var hasard = creerHasard(nombreDepuisTexte(mood.id));
+
+    var taches = composition.taches.map(function (tache) {
+      return {
+        couleur: tache[0],
+        x: tache[1] + (hasard() - 0.5) * 0.12,
+        y: tache[2] + (hasard() - 0.5) * 0.08,
+        rayon: tache[3] * TAILLE_DES_TACHES
+      };
+    });
+    return { fond: composition.fond, taches: taches };
+  }
+
+
   /* ---------- Fonction principale ---------- */
 
   // Dessine le dégradé sur un canvas (à la taille du canvas).
@@ -213,23 +238,16 @@ var Degrade = (function () {
     var ctx = canvas.getContext("2d");
     var largeur = canvas.width;
     var hauteur = canvas.height;
-    var composition = COMPOSITIONS[mood.composition] || COMPOSITIONS.halo;
-
-    // Petits décalages propres à chaque mood : deux moods qui partagent
-    // une composition n'ont pas exactement le même dégradé.
-    var hasard = creerHasard(nombreDepuisTexte(mood.id));
+    var plan = calculerTaches(mood);
 
     // 1. Le fond
-    ctx.fillStyle = rgba(couleurs[composition.fond].hsl, 1);
+    ctx.fillStyle = rgba(couleurs[plan.fond].hsl, 1);
     ctx.fillRect(0, 0, largeur, hauteur);
 
     // 2. Les taches floues
-    composition.taches.forEach(function (tache) {
-      var couleur = couleurs[tache[0]].hsl;
-      var x = (tache[1] + (hasard() - 0.5) * 0.12) * largeur;
-      var y = (tache[2] + (hasard() - 0.5) * 0.08) * hauteur;
-      var rayon = tache[3] * TAILLE_DES_TACHES * hauteur;
-      dessinerTache(ctx, couleur, x, y, rayon);
+    plan.taches.forEach(function (tache) {
+      dessinerTache(ctx, couleurs[tache.couleur].hsl,
+        tache.x * largeur, tache.y * hauteur, tache.rayon * hauteur);
     });
 
     // 3. Le grain
@@ -238,7 +256,8 @@ var Degrade = (function () {
 
   return {
     dessiner: dessiner,
-    COMPOSITIONS: COMPOSITIONS   // exposé pour l'export CSS (étape 8)
+    calculerTaches: calculerTaches,   // pour l'export CSS
+    ETIREMENT: ETIREMENT              // pour l'export CSS
   };
 
 })();

@@ -11,6 +11,7 @@
   <script defer src="js/moods.js"></script>
   <script defer src="js/palette.js"></script>
   <script defer src="js/gradient.js"></script>
+  <script defer src="js/export.js"></script>
   <script defer src="js/app.js"></script>
 </head>
 <body>
@@ -99,6 +100,55 @@
           <output class="valeur" id="valeur-grain" for="curseur-grain">45</output>
         </div>
       </div>
+    </section>
+
+    <!-- ========== EXPORTS ========== -->
+    <!-- Chaque bouton porte data-export (quoi) et data-action (copier / télécharger) :
+         un seul écouteur dans app.js gère tous les boutons. -->
+    <section class="bloc" aria-labelledby="titre-exports">
+      <div class="bloc__entete">
+        <h2 class="bloc__titre" id="titre-exports">Exports</h2>
+      </div>
+      <ul class="exports">
+        <li class="export">
+          <div class="export__texte">
+            <strong>Moodboard</strong>
+            <span>PNG · grille 3×3 avec les HEX</span>
+          </div>
+          <div class="export__actions">
+            <button class="bouton" type="button" data-export="png-palette" data-action="telecharger">Télécharger</button>
+          </div>
+        </li>
+        <li class="export">
+          <div class="export__texte">
+            <strong>Dégradé</strong>
+            <span>PNG · 1080 × 1920, avec le grain</span>
+          </div>
+          <div class="export__actions">
+            <button class="bouton" type="button" data-export="png-degrade" data-action="telecharger">Télécharger</button>
+          </div>
+        </li>
+        <li class="export">
+          <div class="export__texte">
+            <strong>Variables CSS</strong>
+            <span>--mood-1 à --mood-9 + dégradé en radial-gradient</span>
+          </div>
+          <div class="export__actions">
+            <button class="bouton" type="button" data-export="css" data-action="copier">Copier</button>
+            <button class="bouton" type="button" data-export="css" data-action="telecharger">Télécharger</button>
+          </div>
+        </li>
+        <li class="export">
+          <div class="export__texte">
+            <strong>JSON</strong>
+            <span>mood, décalage de teinte, hex / rgb / hsl</span>
+          </div>
+          <div class="export__actions">
+            <button class="bouton" type="button" data-export="json" data-action="copier">Copier</button>
+            <button class="bouton" type="button" data-export="json" data-action="telecharger">Télécharger</button>
+          </div>
+        </li>
+      </ul>
     </section>
 
   </main>

@@ -269,6 +269,63 @@ curseurGrain.addEventListener("input", function () {
 });
 
 
+/* ---------- Exports ---------- */
+
+// Prépare le contenu demandé, à partir de ce qui est affiché à l'écran
+// (donc avec le décalage HUE en cours).
+// Renvoie { contenu, nomFichier, type } — le contenu peut être une promesse (PNG).
+function preparerExport(format) {
+  var couleurs = paletteAffichee();
+  var mood = etat.moodPrincipal;
+
+  if (format === "png-palette") {
+    return { contenu: Export.pngPalette(couleurs, mood, etat.decalageHue),
+             nomFichier: Export.nomDeFichier(mood, "palette", "png"), type: "image/png" };
+  }
+  if (format === "png-degrade") {
+    return { contenu: Export.pngDegrade(couleurs, mood, etat.intensiteGrain),
+             nomFichier: Export.nomDeFichier(mood, "degrade", "png"), type: "image/png" };
+  }
+  if (format === "css") {
+    return { contenu: Export.css(couleurs, mood, etat.decalageHue),
+             nomFichier: Export.nomDeFichier(mood, "", "css"), type: "text/css" };
+  }
+  return { contenu: Export.json(couleurs, mood, etat.moodAccent, etat.decalageHue),
+           nomFichier: Export.nomDeFichier(mood, "", "json"), type: "application/json" };
+}
+
+// Retour visuel sur le bouton : "Copié !" ou "Téléchargé !" pendant un instant.
+function confirmerSurBouton(bouton, texte) {
+  var texteNormal = bouton.textContent;
+  bouton.textContent = texte;
+  bouton.disabled = true;
+  setTimeout(function () {
+    bouton.textContent = texteNormal;
+    bouton.disabled = false;
+  }, 1200);
+}
+
+document.querySelector(".exports").addEventListener("click", function (evenement) {
+  var bouton = evenement.target.closest("button[data-export]");
+  if (!bouton) return;
+
+  var fichier = preparerExport(bouton.dataset.export);
+
+  if (bouton.dataset.action === "copier") {
+    copierTexte(fichier.contenu).then(function () {
+      confirmerSurBouton(bouton, "Copié !");
+    });
+    return;
+  }
+
+  // Promise.resolve : marche que le contenu soit déjà prêt (texte) ou pas encore (PNG)
+  Promise.resolve(fichier.contenu).then(function (contenu) {
+    Export.telecharger(contenu, fichier.nomFichier, fichier.type);
+    confirmerSurBouton(bouton, "Téléchargé !");
+  });
+});
+
+
 /* ---------- Thème clair / sombre ---------- */
 // Le CSS fait tout le travail : il suffit de poser data-theme="dark" ou
 // "light" sur la balise <html>. Le choix est mémorisé dans le navigateur

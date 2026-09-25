@@ -340,7 +340,47 @@ body {
 }
 
 
-/* ---------- 11. Mobile ---------- */
+/* ---------- 11. Exports ---------- */
+.exports {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.export {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--bordure);
+}
+
+.export:first-child {
+  border-top: none;
+}
+
+.export__texte {
+  display: flex;
+  flex-direction: column;
+}
+
+.export__texte span {
+  color: var(--texte-doux);
+  font-size: 0.9rem;
+}
+
+.export__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+
+/* ---------- 12. Mobile ---------- */
 @media (max-width: 520px) {
   .grille {
     gap: 8px;
@@ -355,5 +395,14 @@ body {
   .hue {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .export {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .export__actions .bouton {
+    flex: 1;
   }
 }
