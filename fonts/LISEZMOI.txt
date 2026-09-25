@@ -1,0 +1,16 @@
+Police du titre "Mood Colors"
+=============================
+
+1. Télécharge "Mistical Spring" sur dafont.com.
+2. Dézippe l'archive et renomme le fichier de police en :
+     MisticalSpring.otf   (si c'est un .otf)
+   ou
+     MisticalSpring.ttf   (si c'est un .ttf)
+3. Place-le dans ce dossier (fonts/).
+
+Rien d'autre à faire : css/style.css le charge automatiquement.
+Sans ce fichier, le titre s'affiche avec une police de secours (Georgia).
+
+Licence : vérifie sur dafont les conditions d'utilisation
+("Free for personal use", "100% Free"…), surtout si le dépôt GitHub
+est public ou si le site a un usage commercial.

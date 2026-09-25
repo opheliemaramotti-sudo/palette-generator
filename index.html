@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Générateur de palette moodboard</title>
+  <title>Mood Colors</title>
   <link rel="stylesheet" href="css/style.css">
   <!-- Scripts classiques avec "defer" : exécutés dans cet ordre, une fois la page lue.
        Pas de modules ES, pour que la page s'ouvre aussi par double-clic. -->
   <script defer src="js/colors.js"></script>
   <script defer src="js/moods.js"></script>
+  <script defer src="js/palette.js"></script>
   <script defer src="js/app.js"></script>
 </head>
 <body>
@@ -17,7 +18,11 @@
 
     <!-- ========== EN-TÊTE ========== -->
     <header class="entete">
-      <h1 class="entete__titre">Générateur de palette moodboard</h1>
+      <!-- Bascule clair / sombre de l'interface -->
+      <button class="bouton bouton--theme" id="bouton-theme" type="button" aria-pressed="false">
+        Mode sombre
+      </button>
+      <h1 class="entete__titre">Mood Colors</h1>
       <p class="entete__sous-titre">Tape une émotion, une ambiance… et laisse venir les couleurs.</p>
     </header>
 

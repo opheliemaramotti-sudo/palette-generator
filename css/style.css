@@ -4,13 +4,28 @@
    les couleurs de la palette ressortent.
    ========================================================= */
 
-/* ---------- 1. Variables (les "tokens" du design) ---------- */
+/* ---------- 1. Police du titre ---------- */
+/* "Mistical Spring" (dafont) : le fichier doit être déposé dans le dossier
+   fonts/ (voir fonts/LISEZMOI.txt). Tant qu'il n'y est pas, le navigateur
+   utilise la police de secours indiquée dans --police-titre. */
+@font-face {
+  font-family: "Mistical Spring";
+  src: url("../fonts/MisticalSpring.otf") format("opentype"),
+       url("../fonts/MisticalSpring.ttf") format("truetype");
+  font-display: swap;   /* affiche le texte tout de suite, puis la police une fois chargée */
+}
+
+
+/* ---------- 2. Variables (les "tokens" du design) ---------- */
+
+/* Thème CLAIR (par défaut) */
 :root {
   --fond: #F3F1EE;          /* neutre chaud très légèrement teinté */
   --surface: #FFFFFF;       /* cartes et champs */
   --texte: #26232A;         /* presque noir, teinté */
   --texte-doux: #77717A;    /* textes secondaires */
   --bordure: #E2DED9;
+  --ombre: rgba(38, 35, 42, 0.06);
 
   --rayon-grand: 20px;      /* coins arrondis des blocs */
   --rayon-moyen: 14px;      /* coins arrondis des cases */
@@ -18,9 +33,38 @@
 
   --espace: 24px;
   --police: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --police-titre: "Mistical Spring", Georgia, "Times New Roman", serif;
+
+  color-scheme: light;      /* champs et barres de défilement en version claire */
 }
 
-/* ---------- 2. Base ---------- */
+/* Thème SOMBRE (gris foncé) : seules les couleurs changent.
+   Il s'applique dans deux cas :
+   1. l'ordinateur est réglé en mode sombre ET l'utilisateur n'a pas choisi "clair" ;
+   2. l'utilisateur a cliqué sur "Mode sombre" (data-theme="dark" sur <html>). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #1F1E22;
+    --surface: #2A292E;
+    --texte: #ECE9EE;
+    --texte-doux: #A39EA8;
+    --bordure: #3A383F;
+    --ombre: rgba(0, 0, 0, 0.25);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --fond: #1F1E22;
+  --surface: #2A292E;
+  --texte: #ECE9EE;
+  --texte-doux: #A39EA8;
+  --bordure: #3A383F;
+  --ombre: rgba(0, 0, 0, 0.25);
+  color-scheme: dark;
+}
+
+/* ---------- 3. Base ---------- */
 * {
   box-sizing: border-box;
 }
@@ -31,6 +75,7 @@ body {
   color: var(--texte);
   font-family: var(--police);
   line-height: 1.5;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 /* Cache visuellement un élément mais le garde pour les lecteurs d'écran */
@@ -43,7 +88,7 @@ body {
   white-space: nowrap;
 }
 
-/* ---------- 3. Mise en page ---------- */
+/* ---------- 4. Mise en page ---------- */
 .page {
   max-width: 760px;
   margin: 0 auto;
@@ -51,15 +96,27 @@ body {
 }
 
 .entete {
+  position: relative;       /* sert de repère au bouton de thème */
   text-align: center;
   margin-bottom: 32px;
 }
 
 .entete__titre {
   margin: 0;
-  font-size: clamp(1.6rem, 4vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  padding-top: 24px;
+  font-family: var(--police-titre);
+  font-size: clamp(3rem, 11vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+/* Bouton clair / sombre, en haut à droite */
+.bouton--theme {
+  position: absolute;
+  top: -24px;
+  right: 0;
+  padding: 6px 14px;
+  font-size: 0.85rem;
 }
 
 .entete__sous-titre {
@@ -67,7 +124,7 @@ body {
   color: var(--texte-doux);
 }
 
-/* ---------- 4. Barre de recherche ---------- */
+/* ---------- 5. Barre de recherche ---------- */
 .recherche {
   display: flex;
   gap: 8px;
@@ -75,7 +132,7 @@ body {
   background: var(--surface);
   border: 1px solid var(--bordure);
   border-radius: var(--rayon-pilule);
-  box-shadow: 0 6px 24px rgba(38, 35, 42, 0.06);
+  box-shadow: 0 6px 24px var(--ombre);
 }
 
 .recherche__champ {
@@ -113,7 +170,7 @@ body {
   border-color: var(--texte-doux);
 }
 
-/* ---------- 5. Boutons ---------- */
+/* ---------- 6. Boutons ---------- */
 .bouton {
   padding: 10px 18px;
   border: 1px solid var(--bordure);
@@ -136,7 +193,7 @@ body {
   color: var(--fond);
 }
 
-/* ---------- 6. Blocs (palette, hue…) ---------- */
+/* ---------- 7. Blocs (palette, hue…) ---------- */
 .bloc {
   margin-top: 32px;
   padding: var(--espace);
@@ -163,7 +220,7 @@ body {
   color: var(--texte-doux);
 }
 
-/* ---------- 7. Grille 3x3 de la palette ---------- */
+/* ---------- 8. Grille 3x3 de la palette ---------- */
 .grille {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -189,7 +246,7 @@ body {
   letter-spacing: 0.03em;
 }
 
-/* ---------- 8. Barre HUE ---------- */
+/* ---------- 9. Barre HUE ---------- */
 .hue {
   display: flex;
   align-items: center;
@@ -231,7 +288,7 @@ body {
   border: 3px solid var(--texte);
 }
 
-/* ---------- 9. Mobile ---------- */
+/* ---------- 10. Mobile ---------- */
 @media (max-width: 520px) {
   .grille {
     gap: 8px;
